@@ -91,7 +91,7 @@ export default class Artists extends Component{
     render(){
         return(
             <div>
-                <Media style={{marginRight: '30px'}}>
+                <Media style={{marginRight: '50px'}}>
                     <Media.Left align="top">
                     <Image src={this.state.currentArtist && this.state.currentArtist.image.url} rounded={true} />
                             
@@ -99,7 +99,7 @@ export default class Artists extends Component{
                     <Media.Body>
                         <Media.Heading componentClass="h1">{this.state.currentArtist && this.state.currentArtist.name}</Media.Heading>
                         <Tabs activeKey={this.state.key} onSelect={this.handleTabChange}>
-                            <Tab title="Top tracks" eventKey={1}>
+                            <Tab title="Top tracks" eventKey={1} style={{ border: '0'}}>
                                 <ListGroup>
                                     {this.renderTopTracks()}
                                 </ListGroup>

@@ -26,7 +26,26 @@ class Player extends Component{
 
     componentWillMount() {
         this.checkCurrentSong()
-     }
+    }
+
+    componentWillUnmount() {
+        this.cancelPlayerCheck()
+    }
+
+    cancelPlayerCheck(){
+        fetch('http://localhost:8000/library/cancel-player-check', {
+            method: 'POST',
+            headers: {
+              'Access-Control-Allow-Origin':'*',
+              'Access-Control-Allow-Headers':'application/json'
+            },
+          }).then(function(response) {
+            return response.json()
+          }).then(json => {
+            console.log("stopped player")
+          })
+      }
+
 
     checkCurrentSong(){
         clearInterval(this.timer);

@@ -65,10 +65,7 @@ class ArtistService:
             sp = spotipy.Spotify(auth=token)
             result = sp.artist_related_artists(artist_id)
             for artist in result['artists']:
-                print(artist)
-                print('\n')
                 length = len(artist['images'])
-                print(length)
                 if(length != 0):
                     image = ImageDTO(artist['images'][-1]['url'], artist['images'][-1]['width'], artist['images'][-1]['height'])
                 else:

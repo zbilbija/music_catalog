@@ -2,3 +2,4 @@
 "react-bootstrap"
 "react-bootstrap-table"
 "react-player-controls"
+"react-burger-menu"

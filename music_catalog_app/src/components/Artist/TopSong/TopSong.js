@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ListGroupItem} from 'react-bootstrap';
+import { ListGroupItem, Row, Col} from 'react-bootstrap';
 import {FormattedTime} from 'react-player-controls';
 
 export default class TopSong extends Component{
@@ -16,7 +16,7 @@ export default class TopSong extends Component{
 
     render(){
         return(
-            <ListGroupItem href={this.state.song.id}> {this.state.song.name} <div style={{float: "right"}}><FormattedTime numSeconds={this.state.song.duration/1000}/> </div></ListGroupItem>
+            <ListGroupItem style={{ border: '0'}}> {this.state.song.name} <div className= "col-sm" style={{display: 'inline', float: "right", marginRight: "400px"}}> <FormattedTime numSeconds={this.state.song.duration/1000}/> </div> </ListGroupItem>
         );
     }
 }

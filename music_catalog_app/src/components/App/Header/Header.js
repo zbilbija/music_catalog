@@ -7,7 +7,7 @@ export default class Header extends Component{
 
     render(){
         return(
-            <Navbar inverse collapseOnSelect >
+            <Navbar inverse collapseOnSelect style={{right: "auto !important", left: "0px !important"}}>
                 <Navbar.Header>
                         <h2 style={{float: 'left'}}><a href="/" > Spotify Music Catalog</a></h2>
                 </Navbar.Header>

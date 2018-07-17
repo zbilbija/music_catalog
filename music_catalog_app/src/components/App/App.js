@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from '../../logo.svg';
 import '../../styles/App.css';
 import '../Songlist/SongList.js'
 import Songlist from '../Songlist/SongList.js';
@@ -7,6 +6,7 @@ import LoginForm from '../Login/LoginForm.js';
 import Player from '../Player/Player.js';
 import Main from './Main/Main';
 import Header from './Header/Header'
+import Sidenav from './Sidenav/Sidenav'
 import history from '../../history/history'
 
 class App extends Component {
@@ -24,6 +24,7 @@ class App extends Component {
     this.checkUser = this.checkUser.bind(this)
     this.onLogoutClick = this.onLogoutClick.bind(this)
     this.cancelPlayerCheck = this.cancelPlayerCheck.bind(this)
+
     this.DefaultState={
       fetchList: false,
       showListBtn: false,
@@ -38,7 +39,7 @@ class App extends Component {
 
  componentWillUnmount() {
   this.cancelPlayerCheck()
-}
+  }
 
   checkUser(){
     const cachedUser = localStorage.getItem('username');
@@ -100,14 +101,16 @@ class App extends Component {
   }
 
   render() {
-
     if(this.state.username === ''){
       return <div />
     }
 
     return (
       <div className="App">
-
+        {
+          !this.state.showLogin && <Player username={this.state.username}/>
+        }
+        <Sidenav/>
         {
           !this.state.showLogin && <Header username={this.state.username} logoutHandler={this.onLogoutClick}/>
         }
@@ -115,8 +118,7 @@ class App extends Component {
         <div className="row" style={{marginTop: "100px"}}>
         <div className="col-sm-6">
         {
-          this.state.showLogin ? [<LoginForm parentCallback={this.getUsername}/>, null] : 
-          [null, <Player username={this.state.username}/>]
+          this.state.showLogin && <LoginForm parentCallback={this.getUsername}/>
         }</div>
         </div>
         <div>
