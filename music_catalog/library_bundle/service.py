@@ -10,6 +10,11 @@ import schedule
 from schedule import Scheduler
 import time
 import threading
+from enum import Enum
+
+class JSONFile(Enum):
+    CONNECTION = "static/spotify_connection_params.json"
+    DOWNLOAD = "static/file_download.json"
 
 class TrackService():
 
@@ -35,13 +40,11 @@ class TrackService():
             self.scheduler.every(60).seconds.do(self.fetch_current_song)
     
     def __init__(self, username):
-        self.username = username
-        json_data = open('static/spotify_connection_params.json') 
-        data = json.load(json_data)
+        self.username = username 
+        data = self.get_data_from_json(JSONFile.CONNECTION.value)
         self.client_id = data["client_id"]
         self.client_secret = data["client_secret"]
         self.redirect_uri = data["redirect_uri"]
-        json_data.close()
         self._job_stop = self.scheduler.run_continuously()
 
     def update_player_state(self, player_state):
@@ -51,19 +54,20 @@ class TrackService():
             self.request_spotify_player_state()
 
     def fetch_all_songs_for_user(self):
-        json_data = open('static/spotify_connection_params.json')   
-        data = json.load(json_data)
+        data = self.get_data_from_json(JSONFile.CONNECTION.value)
         scope = data["scope"][0]
         if(self.user_token is None):
             token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri)
         else:
+            print("GENERATED TOKEN TIME:")
+            print(self.user_token.date_generated)
             elapsed = datetime.datetime.utcnow() - self.user_token.date_generated
+            print(elapsed.seconds)
             elapsed_hours = elapsed.seconds//3600
             if(elapsed_hours < 1):
                 token = self.user_token.token
             else:
                token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri) 
-        json_data.close()
         tracks = []
         if token:
             self.user_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
@@ -83,9 +87,8 @@ class TrackService():
         
         return tracks
     
-    def fetch_current_song(self):
-        json_data = open('static/spotify_connection_params.json')   
-        data = json.load(json_data)
+    def fetch_current_song(self):  
+        data = self.get_data_from_json(JSONFile.CONNECTION.value)
         scope = data["scope"][1]
         if(self.current_track_token is None or self.current_track_token.token == ''):
             token = util.prompt_for_user_token(self.username, scope,client_id=self.client_id, client_secret=self.client_secret,redirect_uri=self.redirect_uri)
@@ -96,8 +99,7 @@ class TrackService():
                 token = self.current_track_token.token
             else:
                token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri) 
-        json_data.close()
-        print(token)
+        print(datetime.datetime.now())
         if token:
             self.current_track_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
             sp = spotipy.client.Spotify(auth=token)
@@ -112,11 +114,9 @@ class TrackService():
         else:
             return None
 
-    def pause_playback(self):
-        json_data = open('static/spotify_connection_params.json')   
-        data = json.load(json_data)
+    def pause_playback(self): 
+        data = self.get_data_from_json(JSONFile.CONNECTION.value)
         scope = data["scope"][4]
-        json_data.close()
         token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri)
         if(token):
             sp = spotipy.client.Spotify(auth=token)
@@ -124,12 +124,14 @@ class TrackService():
 
 
     def download_library(self):
-        json_data = open('static/spotify_connection_params.json')   
-        data = json.load(json_data)
+        data = self.get_data_from_json(JSONFile.CONNECTION.value)
         scope = data["scope"][0]
-        json_data.close()
+        data = self.get_data_from_json(JSONFile.DOWNLOAD.value)
+        file_location = data['file_location']
+        file_name = self.username + data['file_name']['library']
+        print(os.path.join(file_location, file_name))
         document = Document()
-        docx_title= os.path.join(r'E:\\music_catalog\\', "TEST_DOCUMENT.docx") 
+        docx_title= os.path.join(file_location, file_name) 
         tracks = []
         if(self.user_token is None):
             token = util.prompt_for_user_token(self.username, scope,client_id=self.client_id,client_secret=self.client_secret,redirect_uri=self.redirect_uri)
@@ -159,6 +161,13 @@ class TrackService():
         for track in tracks:
             document.add_paragraph(track.name + " - " + track.artist + " (" + track.album + ")")
         document.save(docx_title)
+
+    def get_data_from_json(self, file_path):
+        json_data = open(file_path)   
+        data = json.load(json_data)
+        json_data.close()
+        return data
+
 
 def run_continuously(self, interval=1):
     """Continuously run, while executing pending jobs at each elapsed

@@ -2,7 +2,7 @@ import spotipy
 import spotipy.util as util
 import json
 import os
-from artist_bundle.dto import FullArtistDTO
+from artist_bundle.dto import FullArtistDTO, RelatedArtistDTO
 from album_bundle.dto import FullAlbumDTO, ImageDTO, SimpleTrackDTO
 
 class ArtistService:
@@ -41,8 +41,9 @@ class ArtistService:
                 albums_dto.append(dto)
             artist = sp.artist(artist_id)
             top_tracks = self.get_top_tracks(artist_id)
-            artist_dto = FullArtistDTO(artist['id'], artist['name'], ImageDTO(artist['images'][0]['url'],artist['images'][0]['width'], artist['images'][0]['height']), 
-                artist['followers']['total'], albums_dto, top_tracks)
+            related_artists = self.get_related_artists(artist_id)
+            artist_dto = FullArtistDTO(artist['id'], artist['name'], ImageDTO(artist['images'][1]['url'],artist['images'][1]['width'], artist['images'][1]['height']), 
+                artist['followers']['total'], albums_dto, top_tracks, related_artists)
         return artist_dto
     
     def get_top_tracks(self, artist_id):
@@ -56,4 +57,23 @@ class ArtistService:
                 tr = SimpleTrackDTO(item['id'], item['name'], item['duration_ms'], item['track_number'])
                 tracks.append(tr)
         return tracks
+    
+    def get_related_artists(self, artist_id):
+        token = util.prompt_for_user_token(self.username, self.scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri)
+        artists = []
+        if(token):
+            sp = spotipy.Spotify(auth=token)
+            result = sp.artist_related_artists(artist_id)
+            for artist in result['artists']:
+                print(artist)
+                print('\n')
+                length = len(artist['images'])
+                print(length)
+                if(length != 0):
+                    image = ImageDTO(artist['images'][-1]['url'], artist['images'][-1]['width'], artist['images'][-1]['height'])
+                else:
+                    image = None
+                artists.append(RelatedArtistDTO(artist['id'], artist['name'], image))
+        return artists
+
 

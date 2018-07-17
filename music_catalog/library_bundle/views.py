@@ -28,7 +28,6 @@ def login(request):
         print("username " + str(data['username']))
         request.session["username"] = data['username']
         return JsonResponse({'message': "called get method"})
-        #return render(request, 'library/index.html', context)
     else:
         return JsonResponse({'message': "called get method"})
 

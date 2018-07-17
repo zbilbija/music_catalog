@@ -15,10 +15,14 @@ export default class Album extends Component{
     }
 
     componentWillMount(){
-        this.fetchAlbum()
+        this.fetchAlbum(this.props)
     }
 
-    fetchAlbum(){
+    componentWillReceiveProps(newProps){
+        this.fetchAlbum(newProps)
+    }
+
+    fetchAlbum(props){
         fetch('http://localhost:8000/albums/album', {
             method: 'POST',
             headers: {
@@ -28,7 +32,7 @@ export default class Album extends Component{
             },
             body: JSON.stringify({
               username: JSON.parse(localStorage.getItem('username')),
-              albumId: ( (this.props.match && this.props.match.params.ID) || this.props.albumId ),
+              albumId: ( (props.match && props.match.params.ID) || props.albumId ),
             })
           }).then(function(response) {
             return response.json()

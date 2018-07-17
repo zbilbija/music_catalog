@@ -1,24 +1,36 @@
 import React, { Component } from 'react';
 import Album from '../Album/Album'
 import TopSong from './TopSong/TopSong'
-import { Media, ListGroup} from 'react-bootstrap';
+import RelatedArtist from './RelatedArtist/RelatedArtist'
+import { Media, ListGroup, Grid, Row, Tabs, Tab, Image} from 'react-bootstrap';
 
 export default class Artists extends Component{
     constructor(props){
         super(props);
         this.state = {
-            currentArtist: null
+            currentArtist: null,
+            key: 1
         }
         this.fetchArtistAlbums = this.fetchArtistAlbums.bind(this);
         this.renderAlbums = this.renderAlbums.bind(this);
         this.renderTopTracks = this.renderTopTracks.bind(this)
+        this.handleTabChange = this.handleTabChange.bind(this)
+        this.renderRelatedArtists = this.renderRelatedArtists.bind(this)
     }
 
     componentWillMount(){
-        this.fetchArtistAlbums()
+        this.fetchArtistAlbums(this.props)
     }
 
-    fetchArtistAlbums(){
+    componentWillReceiveProps(newProps){
+        console.log(newProps)
+        this.fetchArtistAlbums(newProps)
+        /*this.renderAlbums()
+        this.renderRelatedArtists()
+        this.renderTopTracks()*/
+    }
+
+    fetchArtistAlbums(props){
         fetch('http://localhost:8000/artists/get-albums', { 
                     method: 'POST',
                     headers: {
@@ -28,14 +40,15 @@ export default class Artists extends Component{
                     },
                     body: JSON.stringify({
                         username: JSON.parse(localStorage.getItem('username')),
-                        artistId: this.props.match.params.ID
+                        artistId: props.match.params.ID
                     })
                 }).then(function(response) {
                     return response.json()
                 }).then(json => {
                     console.log(json)
                     this.setState({
-                        currentArtist: json
+                        currentArtist: json,
+                        key: 1
                     })
                     
                 }).catch(function(error) {
@@ -61,21 +74,44 @@ export default class Artists extends Component{
         return topTracks;
     }
 
+    renderRelatedArtists(){
+        /*<img width={this.state.currentArtist && this.state.currentArtist.image.width} height={this.state.currentArtist && this.state.currentArtist.image.height}
+        src={this.state.currentArtist && this.state.currentArtist.image.url} alt="album_thumbnail" />*/
+        let relatedArtists= []
+        if(this.state.currentArtist){
+            relatedArtists = this.state.currentArtist.relatedArtists.map((artist) => {return <RelatedArtist artist={artist} />})
+        }
+        return relatedArtists;
+    }
+
+    handleTabChange(key){
+        this.setState({key: key})
+    }
 
     render(){
         return(
             <div>
-                <Media>
+                <Media style={{marginRight: '30px'}}>
                     <Media.Left align="top">
-                            <img width={this.state.currentArtist && this.state.currentArtist.image.width} height={this.state.currentArtist && this.state.currentArtist.image.height}
-                            src={this.state.currentArtist && this.state.currentArtist.image.url} alt="album_thumbnail" />
+                    <Image src={this.state.currentArtist && this.state.currentArtist.image.url} rounded={true} />
+                            
                     </Media.Left>
                     <Media.Body>
                         <Media.Heading componentClass="h1">{this.state.currentArtist && this.state.currentArtist.name}</Media.Heading>
-                        <h3>Top tracks</h3>
-                        <ListGroup>
-                            {this.renderTopTracks()}
-                        </ListGroup>
+                        <Tabs activeKey={this.state.key} onSelect={this.handleTabChange}>
+                            <Tab title="Top tracks" eventKey={1}>
+                                <ListGroup>
+                                    {this.renderTopTracks()}
+                                </ListGroup>
+                            </Tab>
+                            <Tab title="Related Artists" eventKey={2}>
+                                <Grid>
+                                    <Row className="show-grid">
+                                        {this.renderRelatedArtists()}
+                                    </Row>
+                                </Grid>
+                            </Tab>
+                        </Tabs>
                     </Media.Body>
                 </Media>
                 <br/><br/>
