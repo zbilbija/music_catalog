@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Library songs</h1>
+
+<a href="{% url 'download'%}" class="btn btn-success">Download list</a><br/>
+
+<ul class="list-group">
+    {% for track in tracks %}
+    <li class="list-group-item">{{track.name}} by {{track.artist}} [{{track.album}}]</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="/library/login" method="POST">
+    <input type='hidden' name='csrfmiddlewaretoken' value='{{ csrf_token }}' />
+    <input type='username' name="username" placeholder="Username">
+    <input type='password' name="password" placeholder="password">
+    <button type="submit">Login</button>
+</form>
+{% endblock %}

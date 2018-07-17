@@ -1,0 +1,4 @@
+"react-player-controls"
+"react-bootstrap"
+"react-bootstrap-table"
+"react-player-controls"
