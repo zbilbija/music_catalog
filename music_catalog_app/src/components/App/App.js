@@ -107,23 +107,19 @@ class App extends Component {
 
     return (
       <div className="App">
-        {
-          !this.state.showLogin && <Player username={this.state.username}/>
-        }
-        <Sidenav/>
-        {
-          !this.state.showLogin && <Header username={this.state.username} logoutHandler={this.onLogoutClick}/>
+        { !this.state.showLogin && <Sidenav/> }
+        {// !this.state.showLogin && <Header username={this.state.username} logoutHandler={this.onLogoutClick}/>
         }
         <div className="App-intro">
-        <div className="row" style={{marginTop: "100px"}}>
-        <div className="col-sm-6">
+        <div className="row">
+        <div className="col-sm-6" style={{marginLeft: "10em"}}>
         {
           this.state.showLogin && <LoginForm parentCallback={this.getUsername}/>
         }</div>
         </div>
         <div>
-        {
-          this.state.showListBtn && <Main /> //<button onClick={this.onSongListClick} className="btn btn-primary btn-lg">Fetch all songs</button>
+        { !this.state.showLogin && <Main username={this.state.username} /> }
+        {// !this.state.showLogin && <Player username={this.state.username}/> 
         }
         {
           this.state.fetchList && <Songlist username={this.state.username}/>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { slide as Menu } from 'react-burger-menu'
+import { slide as Menu } from 'react-burger-menu';
+import { Link } from 'react-router-dom';
 
 export default class Sidenav extends Component {
 
@@ -49,16 +50,21 @@ export default class Sidenav extends Component {
               display: 'inline-block'
             },
             bmOverlay: {
-              background: 'rgba(0, 0, 0, 0.3)'
+              background: 'rgba(0, 0, 0, 0.0)'
             }
           }
 
         return(
             <Menu styles= {styles}>
-                <a id="home" className="menu-item" href="/">Home</a><br/>
-                <a id="about" className="menu-item" href="/about">About</a>
-                <a id="contact" className="menu-item" href="/contact">Contact</a>
-                <a onClick={ this.showSettings } className="menu-item--small" href="">Settings</a>
+                <Link className="btn btn-link btn-lg" to={'/recent/'}> Recently Played</Link>
+                <br/>
+                <Link className="btn btn-link btn-lg" to={'/songs/' + JSON.parse(localStorage.getItem('username'))}> Songlist</Link>
+                <br/>
+                <Link className="btn btn-link btn-lg" to={'/library-artists/' + JSON.parse(localStorage.getItem('username'))}> Artists</Link>
+                <br/>
+                <Link className="btn btn-link btn-lg" to={'/library-albums/' + JSON.parse(localStorage.getItem('username'))}> Albums</Link>
+                <br/>
+                <Link className="btn btn-link btn-lg" to={'/playlists/' + JSON.parse(localStorage.getItem('username'))}> Playlists</Link>
         </Menu>
         );
     }

@@ -68,9 +68,11 @@ class TrackService():
                 token = self.user_token.token
             else:
                token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri) 
+               self.user_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
         tracks = []
         if token:
-            self.user_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
+            if(self.user_token is None):
+                self.user_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
             sp = spotipy.Spotify(auth=token)
             i=0
             while True:
@@ -98,10 +100,12 @@ class TrackService():
             if(elapsed_hours < 1):
                 token = self.current_track_token.token
             else:
-               token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri) 
+                token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri) 
+                self.current_track_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
         print(datetime.datetime.now())
         if token:
-            self.current_track_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
+            if(self.current_track_token is None):
+                self.current_track_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
             sp = spotipy.client.Spotify(auth=token)
             result = sp.current_user_playing_track()
             track = result
@@ -114,7 +118,7 @@ class TrackService():
         else:
             return None
 
-    def pause_playback(self): 
+    def pause_playback(self): #switch to different service or delegate to different WebAPI service, called from react
         data = self.get_data_from_json(JSONFile.CONNECTION.value)
         scope = data["scope"][4]
         token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri)
@@ -122,6 +126,28 @@ class TrackService():
             sp = spotipy.client.Spotify(auth=token)
             sp.pause_playback()
 
+    def fetch_recently_played(self):
+        data = self.get_data_from_json(JSONFile.CONNECTION.value)
+        scope = data['scope'][5]
+        token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri)
+        tracks_dto = []
+        if token :
+            sp = spotipy.Spotify(auth=token)
+            result = sp.current_user_recently_played()
+            tracks = result['items']
+            for track in tracks:
+                single = track['track']
+                if(any(x.id == single['id'] for x in tracks_dto)):
+                    continue
+                artist = ArtistDTO(single['artists'][0]['id'], single['artists'][0]['name'])
+                album = SimpleAlbumDTO(single['album']['id'], single['album']['name'])
+                current_track = CurrentTrackDTO(single['id'],single['name'], False, single['duration_ms'], 0, single['album']['images'][-1]['url'], artist, album)
+                tracks_dto.append(current_track)
+        return tracks_dto
+
+    def fetch_saved_albums(self):
+        #spotipy.current_user_saved_albums
+        return None
 
     def download_library(self):
         data = self.get_data_from_json(JSONFile.CONNECTION.value)
@@ -142,8 +168,10 @@ class TrackService():
                 token = self.user_token.token
             else:
                token = util.prompt_for_user_token(self.username, scope, client_id=self.client_id, client_secret=self.client_secret, redirect_uri=self.redirect_uri)
+               self.user_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
         if token:
-            self.user_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
+            if(self.user_token is None):
+                self.user_token = SpotifyTokenHolder(token, datetime.datetime.utcnow())
             sp = spotipy.Spotify(auth=token)
             i=0
             while True:

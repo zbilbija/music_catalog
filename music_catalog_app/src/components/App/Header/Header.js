@@ -14,7 +14,7 @@ export default class Header extends Component{
                 <Navbar.Collapse>
                     <Nav>
                         <NavItem>
-                            <Link className="btn btn-primary btn-lg" to={'/songs/' + this.props.username}> Songlist</Link>
+                            <Link className="btn btn-primary btn-lg" to={'/songs/' + JSON.parse(localStorage.getItem('username'))}> Songlist</Link>
                         </NavItem>
                     </Nav>
                     <Nav pullRight>

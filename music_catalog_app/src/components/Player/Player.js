@@ -166,7 +166,8 @@ class Player extends Component{
                                 <PlaybackControls isPlayable={this.state.isPlayable} isPlaying={this.state.isPlaying} showPrevious={this.state.showPrevious}  hasPrevious={this.state.hasPrevious}  showNext={this.state.showNext}  hasNext={this.state.hasNext} 
                                 onPlaybackChange={isPlaying => this.playbackToggle(isPlaying)} 
                                 onPrevious={() => alert('Go to previous')}  onNext={() => alert('Go to next')}/>
-                                <Button onClick={this.checkCurrentSong} className="btn btn-success" style={{float:'right'}}>Current song</Button>
+                                {//<Button onClick={this.checkCurrentSong} className="btn btn-success" style={{float:'right'}}>Current song</Button>
+                                }
                             </Media.Body>
                         </Media>
                     </Panel.Body>

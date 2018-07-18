@@ -18,10 +18,8 @@ track_service = None
 @csrf_exempt
 def login(request):
     if request.method == "GET":
-
         #rotate_token(request)
         return JsonResponse({'message': "called get method"})
-    
     elif request.method == "POST":
         stream = BytesIO(request.body)
         data = JSONParser().parse(stream)
@@ -80,6 +78,16 @@ def fetch_songs(request):
             return JsonResponse(serializer.data, safe=False)
     else:
         return JsonResponse({'message': "reached fetch songs method"})
+
+@csrf_exempt
+def recently_played(request):
+    if request.method == "POST":
+        global track_service
+        recently = track_service.fetch_recently_played()
+        serializer = CurrentTrackDTOSerializer(recently, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return JsonResponse({"status": "reached recently-played"})
 
 @csrf_exempt
 def get_current_track(request):

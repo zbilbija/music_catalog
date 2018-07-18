@@ -137,9 +137,11 @@ class Songlist extends Component{
             return <div />
         }
         return (
-            <div>
+            <div >
                 <button onClick={this.onDonwloadSongListClick} className="btn btn-primary btn-lg">Download songs</button>
+                <br/>
                 <ToastContainer autoClose={8000}/>
+                <br/>
                 <BootstrapTable data={this.state.songs} striped hover>
                     <TableHeaderColumn isKey dataField='id' hidden={true} key={0}>Track ID</TableHeaderColumn>
                     <TableHeaderColumn width='10%' dataField='number' key={1}>#</TableHeaderColumn>

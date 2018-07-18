@@ -4,7 +4,8 @@
         "user-read-currently-playing",
         "playlist-read-private",
         "playlist-read-collaborative",
-        "user-modify-playback-state"
+        "user-modify-playback-state",
+        "user-read-recently-played"
     ],
     "client_id": "64366441da5f41d69f2d6d8b188ac236",
     "client_secret": "2697c2c4525e4a75b8eaaf98ae0e1f4a",
